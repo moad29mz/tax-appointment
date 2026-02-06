@@ -64,7 +64,7 @@
 <body>
     <div class="sidebar">
         <div class="text-center mb-4">
-            <h4>المديرية العامة للضرائب</h4>
+            <h4>مصلحة الجبايات</h4>
             <p class="text-muted">لوحة الإدارة</p>
         </div>
         
