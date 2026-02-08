@@ -77,7 +77,6 @@
             <p class="mb-0"><strong>ملاحظة:</strong> يرجى الحضور قبل 10 دقائق من الموعد مع إحضار جميع الوثائق المطلوبة</p>
         </div>
         
-        <h5 class="mb-4">شكراً لك على استخدام خدمة الحجز الإلكتروني</h5>
         
         <div class="mt-4">
             <a href="{{ route('appointment.create') }}" class="btn btn-custom">
@@ -87,10 +86,7 @@
                 <i class="fas fa-home"></i> الصفحة الرئيسية
             </a>
         </div>
-        
-        <div class="alert alert-info mt-4">
-            <i class="fas fa-info-circle"></i> سيتم إرسال رسالة تأكيد على رقم هاتفك المحمول
-        </div>
+       
     </div>
     
     <!-- Font Awesome -->

@@ -34,3 +34,30 @@ Route::prefix('admin')->group(function () {
         return redirect('/')->with('success', 'تم تسجيل الخروج بنجاح');
     })->name('admin.logout');
 });
+
+
+
+Route::prefix('admin')->group(function () {
+    // صفحة تسجيل الدخول
+    Route::get('/login', function() {
+        return view('admin.auth.login');
+    })->name('admin.login');
+    
+    // معالجة تسجيل الدخول
+    Route::post('/login', function() {
+        // هنا سيتم معالجة تسجيل الدخول
+        return redirect()->route('admin.dashboard');
+    })->name('admin.login.submit');
+    
+    // تسجيل الخروج
+    Route::post('/logout', function() {
+        session()->forget('admin_user');
+        return redirect()->route('admin.login');
+    })->name('admin.logout');
+});
+
+
+// البريد: admin@tax.gov
+
+// كلمة المرور: admin123
+

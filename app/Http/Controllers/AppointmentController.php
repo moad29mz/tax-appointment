@@ -103,39 +103,53 @@ class AppointmentController extends Controller
     }
 
     // الحصول على الأوقات المتاحة ليوم محدد
-    public function getAvailableTimes(Request $request)
-    {
-        $request->validate([
-            'date' => 'required|date',
-        ]);
+    // الحصول على الأوقات المتاحة ليوم محدد
+public function getAvailableTimes(Request $request)
+{
+    $request->validate([
+        'date' => 'required|date',
+    ]);
 
-        $date = $request->date;
-        
-        // الأوقات المتاحة من الساعة 9:00 إلى 16:30
-        $allTimes = [];
-        for ($hour = 9; $hour <= 16; $hour++) {
-            if ($hour == 16) {
-                $allTimes[] = sprintf('%02d:00', $hour);
-                $allTimes[] = sprintf('%02d:30', $hour);
-            } else {
-                $allTimes[] = sprintf('%02d:00', $hour);
-                $allTimes[] = sprintf('%02d:30', $hour);
-            }
+    $date = $request->date;
+    
+    // الحصول على أوقات العمل من الإعدادات
+    $startTime = \App\Models\Setting::getValue('working_hours_start', '09:00');
+    $endTime = \App\Models\Setting::getValue('working_hours_end', '16:30');
+    
+    // تحويل أوقات العمل إلى ساعات
+    $startHour = (int) explode(':', $startTime)[0];
+    $endHour = (int) explode(':', $endTime)[0];
+    $endMinute = (int) explode(':', $endTime)[1];
+    
+    // إنشاء قائمة بجميع الأوقات المتاحة
+    $allTimes = [];
+    for ($hour = $startHour; $hour <= $endHour; $hour++) {
+        // إذا كانت هذه هي الساعة الأخيرة، نتحقق من الدقائق
+        if ($hour == $endHour && $endMinute < 30) {
+            $allTimes[] = sprintf('%02d:00', $hour);
+        } else if ($hour == $endHour && $endMinute >= 30) {
+            $allTimes[] = sprintf('%02d:00', $hour);
+            $allTimes[] = sprintf('%02d:30', $hour);
+        } else {
+            $allTimes[] = sprintf('%02d:00', $hour);
+            $allTimes[] = sprintf('%02d:30', $hour);
         }
-
-        // الأوقات المحجوزة لهذا اليوم
-        $bookedTimes = Appointment::where('appointment_date', $date)
-            ->whereIn('status', ['pending', 'processed'])
-            ->pluck('appointment_time')
-            ->toArray();
-
-        // الأوقات المتاحة
-        $availableTimes = array_diff($allTimes, $bookedTimes);
-
-        return response()->json([
-            'times' => array_values($availableTimes)
-        ]);
     }
+
+    // الأوقات المحجوزة لهذا اليوم
+    $bookedTimes = Appointment::where('appointment_date', $date)
+        ->whereIn('status', ['pending', 'processed'])
+        ->pluck('appointment_time')
+        ->toArray();
+
+    // الأوقات المتاحة
+    $availableTimes = array_diff($allTimes, $bookedTimes);
+
+    return response()->json([
+        'times' => array_values($availableTimes),
+        'working_hours' => $startTime . ' - ' . $endTime
+    ]);
+}
 
     // إحصائيات مفصلة - هذه هي الدالة المفقودة
     public function statistics()
@@ -266,27 +280,74 @@ class AppointmentController extends Controller
     }
 
     // صفحة الإعدادات
-    public function settings()
-    {
-        return view('admin.settings');
-    }
+    // صفحة الإعدادات
+public function settings()
+{
+    $settings = \App\Models\Setting::getAllGrouped();
+    return view('admin.settings', compact('settings'));
+}
 
-    // تحديث الإعدادات
-    public function updateSettings(Request $request)
-    {
-        // هنا يمكنك حفظ الإعدادات في قاعدة البيانات أو ملف .env
-        // هذا مثال مبسط
-        $settings = [
-            'working_hours_start' => $request->working_hours_start,
-            'working_hours_end' => $request->working_hours_end,
-            'appointment_duration_payment' => $request->appointment_duration_payment,
-            'appointment_duration_consultation' => $request->appointment_duration_consultation,
-            'max_appointments_per_day' => $request->max_appointments_per_day,
-        ];
-
-        // يمكن حفظ هذه الإعدادات في جدول settings في قاعدة البيانات
-        // أو في ملف .env أو cache
+// تحديث الإعدادات
+public function updateSettings(Request $request)
+{
+    try {
+        // حفظ الإعدادات العامة
+        $this->saveSetting($request, 'organization_name');
+        $this->saveSetting($request, 'municipality_name');
+        
+        // حفظ معلومات الاتصال
+        $this->saveSetting($request, 'official_email');
+        $this->saveSetting($request, 'phone_number');
+        $this->saveSetting($request, 'address');
+        
+        // حفظ الإعدادات النظامية
+        $this->saveSetting($request, 'language');
+        $this->saveSetting($request, 'working_hours_start');
+        $this->saveSetting($request, 'working_hours_end');
+        
+        // معالجة رفع الشعار
+        if ($request->hasFile('logo')) {
+            $this->handleLogoUpload($request);
+        }
         
         return redirect()->route('admin.settings')->with('success', 'تم تحديث الإعدادات بنجاح.');
+        
+    } catch (\Exception $e) {
+        return redirect()->route('admin.settings')->with('error', 'حدث خطأ أثناء حفظ الإعدادات: ' . $e->getMessage());
     }
+}
+
+// دالة مساعدة لحفظ الإعدادات
+private function saveSetting(Request $request, $key)
+{
+    if ($request->has($key)) {
+        \App\Models\Setting::setValue($key, $request->input($key));
+    }
+}
+
+// دالة معالجة رفع الشعار
+private function handleLogoUpload(Request $request)
+{
+    $request->validate([
+        'logo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+    
+    if ($request->hasFile('logo')) {
+        $image = $request->file('logo');
+        $imageName = 'logo_' . time() . '.' . $image->getClientOriginalExtension();
+        
+        // حفظ الصورة في المجلد العام
+        $image->move(public_path('uploads/logo'), $imageName);
+        
+        // حفظ المسار في قاعدة البيانات
+        \App\Models\Setting::setValue('logo', 'uploads/logo/' . $imageName);
+    }
+}
+
+    // تحديث الإعدادات
+
+    
+
+    
+    
 }
