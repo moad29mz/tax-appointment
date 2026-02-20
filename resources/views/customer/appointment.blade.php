@@ -143,10 +143,10 @@
                                 <select class="form-select" id="appointment_type" name="appointment_type" required>
                                     <option value="">اختر السبب</option>
                                     <option value="payment" {{ old('appointment_type') == 'payment' ? 'selected' : '' }}>
-                                        أداء الضريبة (15 دقيقة)
+                                        أداء الضريبة 
                                     </option>
                                     <option value="consultation" {{ old('appointment_type') == 'consultation' ? 'selected' : '' }}>
-                                        استفسار وتوجيه (20 دقيقة)
+                                        استفسار وتوجيه 
                                     </option>
                                 </select>
                             </div>
@@ -182,7 +182,7 @@
             <div class="col-lg-4">
                 <div class="required-docs mb-4">
                     <h4 class="section-title">ماذا يجب أن أحضر؟</h4>
-                    <p>مرحباً بكم في المديرية العامة للضرائب. لضمان سير موعدكم الخاص بخدمة "أداء الضريبة" في أفضل الظروف، يرجى إحضار الوثائق الأساسية التالية:</p>
+                    <p>مرحباً بكم في مصلحة الجبايات. لضمان سير موعدكم الخاص بخدمة "أداء الضريبة" في أفضل الظروف، يرجى إحضار الوثائق الأساسية التالية:</p>
                     
                     <ul class="list-unstyled">
                         <li><strong>البطاقة الوطنية (CIN):</strong></li>
@@ -195,14 +195,7 @@
                     <p class="text-muted mt-3"><small>ملاحظة: قد تختلف بعض الوثائق حسب نوع الضريبة (سيارات، عقارات، ...)</small></p>
                 </div>
 
-                <div class="alert alert-info">
-                    <h5><i class="fas fa-info-circle"></i> معلومات مهمة</h5>
-                    <ul class="mb-0">
-                        <li>يرجى الحضور قبل 10 دقائق من الموعد المحدد</li>
-                        <li>إحضار جميع الوثائق المطلوبة</li>
-                        <li>في حالة التعذر، يرجى إلغاء الموعد مسبقاً</li>
-                    </ul>
-                </div>
+                
             </div>
         </div>
     </div>

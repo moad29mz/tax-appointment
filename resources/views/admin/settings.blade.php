@@ -234,7 +234,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="appointment_duration_consultation" class="form-label">مدة موعد الاستفسار (بالدقائق)</label>
                     <input type="number" class="form-control" id="appointment_duration_consultation" 
-                           name="appointment_duration_consultation" value="20" min="5" max="60">
+                           name="appointment_duration_consultation" value="15" min="5" max="60">
                 </div>
             </div>
             
@@ -255,48 +255,16 @@
             </div>
         </div>
 
-        <!-- قسم الإشعارات -->
-        <div class="settings-section">
-            <h4 class="section-title"><i class="fas fa-bell"></i> إعدادات الإشعارات</h4>
-            
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" 
-                               id="email_notifications" name="email_notifications" checked>
-                        <label class="form-check-label" for="email_notifications">
-                            تفعيل الإشعارات عبر البريد الإلكتروني
-                        </label>
-                    </div>
+        
                     
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" 
-                               id="sms_notifications" name="sms_notifications" checked>
-                        <label class="form-check-label" for="sms_notifications">
-                            تفعيل الإشعارات عبر الرسائل النصية
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="reminder_hours" class="form-label">ساعات التذكير قبل الموعد</label>
-                        <input type="number" class="form-control" id="reminder_hours" 
-                               name="reminder_hours" value="24" min="1" max="168">
-                        <div class="form-text">عدد الساعات قبل الموعد لإرسال التذكير</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    
 
         <!-- أزرار الحفظ -->
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-primary btn-lg px-5">
                 <i class="fas fa-save"></i> حفظ جميع الإعدادات
             </button>
-            <button type="reset" class="btn btn-outline-secondary btn-lg px-5 ms-2">
-                <i class="fas fa-undo"></i> إعادة التعيين
-            </button>
+           
         </div>
     </form>
 @endsection

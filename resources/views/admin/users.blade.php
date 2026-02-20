@@ -96,9 +96,7 @@
                 <button class="btn btn-light me-2" data-bs-toggle="modal" data-bs-target="#addUserModal">
                     <i class="fas fa-user-plus"></i> إضافة مستخدم جديد
                 </button>
-                <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#importUsersModal">
-                    <i class="fas fa-file-import"></i> استيراد
-                </button>
+                
             </div>
         </div>
     </div>
