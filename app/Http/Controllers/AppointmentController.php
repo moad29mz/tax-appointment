@@ -68,23 +68,33 @@ class AppointmentController extends Controller
     }
 
     // عرض لوحة الإدارة
-    public function admin()
-    {
-        $today = Carbon::today()->toDateString();
-        
-        $stats = [
-            'pending' => Appointment::where('status', 'pending')->count(),
-            'processed' => Appointment::where('status', 'processed')->count(),
-            'today' => Appointment::whereDate('appointment_date', $today)->count(),
-            'total' => Appointment::count(),
-        ];
-
-        $appointments = Appointment::orderBy('appointment_date', 'asc')
-            ->orderBy('appointment_time', 'asc')
-            ->paginate(10);
-
-        return view('admin.dashboard', compact('stats', 'appointments'));
+   // عرض لوحة الإدارة
+public function admin(Request $request = null)
+{
+    // إذا لم يتم تمرير Request، أنشئ Request جديد
+    if ($request === null) {
+        $request = request();
     }
+    
+    $today = Carbon::today()->toDateString();
+    
+    $stats = [
+        'pending' => Appointment::where('status', 'pending')->count(),
+        'processed' => Appointment::where('status', 'processed')->count(),
+        'today' => Appointment::whereDate('appointment_date', $today)->count(),
+        'total' => Appointment::count(),
+    ];
+
+    // عدد العناصر في الصفحة (افتراضي 10)
+    $perPage = $request->get('per_page', 10);
+    
+    $appointments = Appointment::orderBy('appointment_date', 'asc')
+        ->orderBy('appointment_time', 'asc')
+        ->paginate($perPage)
+        ->withQueryString();
+
+    return view('admin.dashboard', compact('stats', 'appointments'));
+}
 
     // تحديث حالة الموعد
     public function updateStatus(Request $request, $id)
@@ -346,7 +356,27 @@ private function handleLogoUpload(Request $request)
 
     // تحديث الإعدادات
 
-    
+    // أضف هذه الدالة في آخر الكلاس
+public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if ($request->email == 'admin@tax.gov' && $request->password == 'admin123') {
+        session(['admin_logged_in' => true, 'admin_name' => 'المسؤول الرئيسي']);
+        return redirect()->route('admin.dashboard')->with('success', 'مرحباً بك في لوحة الإدارة');
+    }
+
+    return back()->with('error', 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+}
+
+public function logout()
+{
+    session()->forget(['admin_logged_in', 'admin_name']);
+    return redirect()->route('admin.login')->with('success', 'تم تسجيل الخروج بنجاح');
+}
 
     
     

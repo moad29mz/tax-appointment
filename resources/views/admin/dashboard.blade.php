@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة إدارة المواعيد - المديرية العامة للضرائب</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -59,6 +60,133 @@
             border-radius: 10px;
             margin-bottom: 30px;
         }
+        
+        /* أنماط pagination */
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+        
+        .pagination .page-item .page-link {
+            color: #2c3e50;
+            border-radius: 8px;
+            margin: 0 2px;
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s;
+        }
+        
+        .pagination .page-item .page-link:hover {
+            background-color: #4a6491;
+            color: white;
+            border-color: #4a6491;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            border-color: #4a6491;
+            font-weight: bold;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+        
+        .pagination .page-item .page-link:focus {
+            box-shadow: 0 0 0 0.2rem rgba(74, 100, 145, 0.25);
+        }
+        
+        /* معلومات الصفحة */
+        .pagination-info {
+            text-align: center;
+            color: #6c757d;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .pagination-info i {
+            color: #4a6491;
+            margin-left: 5px;
+        }
+        
+        /* اختيار عدد العناصر في الصفحة */
+        .per-page-selector {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .per-page-selector select {
+            width: auto;
+            padding: 5px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .per-page-selector select:focus {
+            border-color: #4a6491;
+            outline: none;
+        }
+        
+        /* تحسينات الجدول */
+        .table th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(74, 100, 145, 0.05);
+            cursor: pointer;
+        }
+        
+        /* عرض الصفحات */
+        .page-numbers {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .page-numbers .btn-page {
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            background: white;
+            color: #2c3e50;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .page-numbers .btn-page:hover {
+            background: #4a6491;
+            color: white;
+            border-color: #4a6491;
+        }
+        
+        .page-numbers .btn-page.active {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            border-color: #4a6491;
+        }
+        
+        .page-numbers .btn-page:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -69,16 +197,16 @@
         </div>
         
         <nav class="nav flex-column">
-            <a href="#" class="nav-link active">
+            <a href="{{ route('admin.dashboard') }}" class="nav-link active">
                 <i class="fas fa-calendar-alt"></i> لائحة المواعيد
             </a>
-            <a href="#" class="nav-link">
+            <a href="{{ route('admin.statistics') }}" class="nav-link">
                 <i class="fas fa-chart-bar"></i> الإحصائيات
             </a>
-            <a href="#" class="nav-link">
+            <a href="{{ route('admin.users') }}" class="nav-link">
                 <i class="fas fa-users"></i> إدارة المستخدمين
             </a>
-            <a href="#" class="nav-link">
+            <a href="{{ route('admin.settings') }}" class="nav-link">
                 <i class="fas fa-cog"></i> الإعدادات
             </a>
             <a href="{{ route('appointment.create') }}" class="nav-link" target="_blank">
@@ -87,10 +215,13 @@
         </nav>
         
         <div class="mt-5 text-center">
-            <p class="text-muted">مرحباً بك، المسؤول</p>
-            <a href="#" class="btn btn-outline-light btn-sm">
-                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
-            </a>
+            <p class="text-muted">مرحباً بك، {{ session('admin_name', 'المسؤول') }}</p>
+            <form action="{{ route('admin.logout') }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </form>
         </div>
     </div>
 
@@ -101,7 +232,7 @@
 
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
@@ -135,7 +266,21 @@
 
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0"><i class="fas fa-table"></i> جدول المواعيد</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="fas fa-table"></i> جدول المواعيد</h5>
+                    
+                    <!-- اختيار عدد العناصر في الصفحة -->
+                    <div class="per-page-selector">
+                        <span class="text-muted"><i class="fas fa-sliders-h"></i> عرض:</span>
+                        <select onchange="changePerPage(this.value)" class="form-select form-select-sm">
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                        </select>
+                        <span class="text-muted">موعد في الصفحة</span>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -154,7 +299,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($appointments as $appointment)
+                            @forelse($appointments as $appointment)
                                 <tr>
                                     <td>{{ $appointment->id }}</td>
                                     <td>{{ $appointment->first_name }} {{ $appointment->last_name }}</td>
@@ -187,26 +332,135 @@
                                                 <option value="cancelled" {{ $appointment->status == 'cancelled' ? 'selected' : '' }}>ملغى</option>
                                             </select>
                                         </form>
-                                        <button class="btn btn-sm btn-outline-secondary mt-1" data-bs-toggle="modal" data-bs-target="#detailsModal{{ $appointment->id }}">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="text-center py-4">
+                                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">لا توجد مواعيد حالياً</p>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="d-flex justify-content-center">
-                    {{ $appointments->links() }}
-                </div>
+                <!-- Pagination بتصميم Bootstrap -->
+                @if($appointments->hasPages())
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {{-- Previous Page Link --}}
+                            @if($appointments->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $appointments->previousPageUrl() }}" rel="prev">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach($appointments->getUrlRange(1, $appointments->lastPage()) as $page => $url)
+                                @if($page == $appointments->currentPage())
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ $page }}</span>
+                                    </li>
+                                @else
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if($appointments->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $appointments->nextPageUrl() }}" rel="next">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
+
+                    <!-- Pagination بديل (أرقام الصفحات) -->
+                    {{-- <div class="page-numbers">
+                        @if(!$appointments->onFirstPage())
+                            <a href="{{ $appointments->previousPageUrl() }}" class="btn-page">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        @endif
+
+                        @for($i = 1; $i <= $appointments->lastPage(); $i++)
+                            @if($i >= $appointments->currentPage() - 2 && $i <= $appointments->currentPage() + 2)
+                                <a href="{{ $appointments->url($i) }}" 
+                                   class="btn-page {{ $i == $appointments->currentPage() ? 'active' : '' }}">
+                                    {{ $i }}
+                                </a>
+                            @endif
+                        @endfor
+
+                        @if($appointments->hasMorePages())
+                            <a href="{{ $appointments->nextPageUrl() }}" class="btn-page">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        @endif
+                    </div> --}}
+                @endif
             </div>
         </div>
     </div>
 
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // دالة تغيير عدد العناصر في الصفحة
+        function changePerPage(value) {
+            let url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+            url.searchParams.set('page', 1); // الرجوع للصفحة الأولى
+            window.location.href = url.toString();
+        }
+        
+        // إضافة تأثير hover للصفوف
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', function(e) {
+                if (!e.target.closest('select')) {
+                    // يمكن إضافة تفاصيل الموعد هنا
+                    console.log('Clicked row:', this);
+                }
+            });
+        });
+        
+        // تحديث حالة select عند تغيير الحالة
+        document.querySelectorAll('select[name="status"]').forEach(select => {
+            select.addEventListener('change', function() {
+                this.style.opacity = '0.5';
+            });
+        });
+        
+        // إخفاء رسائل النجاح بعد 5 ثواني
+        setTimeout(function() {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                alert.style.transition = 'opacity 0.5s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 5000);
+    </script>
 </body>
 </html>
