@@ -88,7 +88,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>مصلحات الجبايات  </h1>
+            <h1>مصلحات الجبايات وزان  </h1>
             <h3>إدارة حجز موعد</h3>
         </div>
 
