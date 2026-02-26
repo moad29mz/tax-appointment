@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول - مصلحة الجبايات</title>
+    <title>تسجيل الدخول - مصلحة الموارد المالية</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -233,14 +233,13 @@
 <body>
     <div class="login-container">
         <div class="login-card">
-            <!-- Logo -->
+            
             <div class="logo">
                 <i class="fas fa-landmark"></i>
-                <h3>مصلحة الجبايات</h3>
-                <p>المديرية العامة للضرائب</p>
+                <h3>مصلحة الموارد المالية</h3>
+                <p>جماعة وزان</p>
             </div>
             
-            <!-- رسائل النجاح والخطأ -->
             @if(session('success'))
                 <div class="alert alert-success">
                     <i class="fas fa-check-circle"></i> {{ session('success') }}
@@ -253,11 +252,9 @@
                 </div>
             @endif
             
-            <!-- نموذج تسجيل الدخول -->
             <form method="POST" action="{{ route('admin.login.submit') }}" id="loginForm">
                 @csrf
                 
-                <!-- حقل البريد الإلكتروني -->
                 <div class="form-group">
                     <i class="fas fa-envelope"></i>
                     <input type="email" 
@@ -270,7 +267,6 @@
                            autofocus>
                 </div>
                 
-                <!-- حقل كلمة المرور -->
                 <div class="form-group">
                     <i class="fas fa-lock"></i>
                     <input type="password" 
@@ -285,13 +281,11 @@
                     </span>
                 </div>
                 
-                <!-- زر تسجيل الدخول -->
                 <button type="submit" class="btn-login" id="loginBtn">
                     <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
                 </button>
             </form>
             
-            <!-- معلومات تجريبية -->
             <div class="demo-info">
                 <p><i class="fas fa-info-circle"></i> <strong>بيانات الدخول:</strong></p>
                 <p><i class="fas fa-envelope"></i> admin@tax.gov</p>
@@ -299,7 +293,6 @@
             </div>
         </div>
         
-        <!-- رابط العودة -->
         <div class="footer-link">
             <a href="{{ route('appointment.create') }}">
                 <i class="fas fa-arrow-right"></i> العودة إلى صفحة حجز المواعيد
@@ -307,7 +300,6 @@
         </div>
     </div>
     
-    <!-- JavaScript -->
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');
@@ -330,7 +322,6 @@
             btn.disabled = true;
         });
         
-        // إخفاء رسائل التنبيه بعد 5 ثواني
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(function(alert) {

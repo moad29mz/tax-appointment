@@ -121,6 +121,20 @@ public function getAvailableTimes(Request $request)
     ]);
 
     $date = $request->date;
+    $today = Carbon::today()->format('Y-m-d');
+    
+    // التحقق من أن التاريخ ليس يوم عطلة (السبت أو الأحد)
+    $carbonDate = Carbon::parse($date);
+    $dayOfWeek = $carbonDate->dayOfWeek;
+    
+    // إذا كان اليوم سبت (6) أو أحد (0)، أرجع مصفوفة فارغة
+    if ($dayOfWeek == 0 || $dayOfWeek == 6) {
+        return response()->json([
+            'times' => [],
+            'working_hours' => '09:00 - 16:30',
+            'message' => 'لا يمكن حجز مواعيد في أيام العطلة (السبت والأحد)'
+        ]);
+    }
     
     // الحصول على أوقات العمل من الإعدادات
     $startTime = \App\Models\Setting::getValue('working_hours_start', '09:00');
@@ -134,7 +148,6 @@ public function getAvailableTimes(Request $request)
     // إنشاء قائمة بجميع الأوقات المتاحة
     $allTimes = [];
     for ($hour = $startHour; $hour <= $endHour; $hour++) {
-        // إذا كانت هذه هي الساعة الأخيرة، نتحقق من الدقائق
         if ($hour == $endHour && $endMinute < 30) {
             $allTimes[] = sprintf('%02d:00', $hour);
         } else if ($hour == $endHour && $endMinute >= 30) {
@@ -152,11 +165,25 @@ public function getAvailableTimes(Request $request)
         ->pluck('appointment_time')
         ->toArray();
 
-    // الأوقات المتاحة
+    // الأوقات المتاحة (بدون المحجوزة)
     $availableTimes = array_diff($allTimes, $bookedTimes);
+    
+    // ===== الحل الجديد هنا =====
+    // إذا كان التاريخ المحدد هو اليوم، نقوم بإزالة الأوقات التي مرت
+    if ($date == $today) {
+        $currentTime = Carbon::now()->format('H:i');
+        
+        // فلترة الأوقات: نحتفظ فقط بالأوقات التي هي > الوقت الحالي
+        $availableTimes = array_filter($availableTimes, function($time) use ($currentTime) {
+            return $time > $currentTime;
+        });
+        
+        // إعادة ترتيب المصفوفة
+        $availableTimes = array_values($availableTimes);
+    }
 
     return response()->json([
-        'times' => array_values($availableTimes),
+        'times' => $availableTimes,
         'working_hours' => $startTime . ' - ' . $endTime
     ]);
 }

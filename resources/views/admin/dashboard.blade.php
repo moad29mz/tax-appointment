@@ -61,7 +61,6 @@
             margin-bottom: 30px;
         }
         
-        /* أنماط pagination */
         .pagination {
             justify-content: center;
             margin-top: 20px;
@@ -102,7 +101,6 @@
             box-shadow: 0 0 0 0.2rem rgba(74, 100, 145, 0.25);
         }
         
-        /* معلومات الصفحة */
         .pagination-info {
             text-align: center;
             color: #6c757d;
@@ -115,7 +113,6 @@
             margin-left: 5px;
         }
         
-        /* اختيار عدد العناصر في الصفحة */
         .per-page-selector {
             display: flex;
             justify-content: flex-end;
@@ -137,7 +134,6 @@
             outline: none;
         }
         
-        /* تحسينات الجدول */
         .table th {
             background-color: #f8f9fa;
             color: #2c3e50;
@@ -149,7 +145,6 @@
             cursor: pointer;
         }
         
-        /* عرض الصفحات */
         .page-numbers {
             display: flex;
             justify-content: center;
@@ -192,7 +187,7 @@
 <body>
     <div class="sidebar">
         <div class="text-center mb-4">
-            <h4>مصلحة الجبايات</h4>
+            <h4>مصلحة الموارد المالية</h4>
             <p class="text-muted">لوحة الإدارة</p>
         </div>
         
@@ -269,7 +264,6 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0"><i class="fas fa-table"></i> جدول المواعيد</h5>
                     
-                    <!-- اختيار عدد العناصر في الصفحة -->
                     <div class="per-page-selector">
                         <span class="text-muted"><i class="fas fa-sliders-h"></i> عرض:</span>
                         <select onchange="changePerPage(this.value)" class="form-select form-select-sm">
@@ -307,7 +301,7 @@
                                     <td>{{ $appointment->phone }}</td>
                                     <td>
                                         @if($appointment->appointment_type == 'payment')
-                                            <span class="badge bg-primary">أداء الضريبة</span>
+                                            <span class="badge bg-primary">أداء الرسوم</span>
                                         @else
                                             <span class="badge bg-info">استفسار وتوجيه</span>
                                         @endif
@@ -346,11 +340,10 @@
                     </table>
                 </div>
                 
-                <!-- Pagination بتصميم Bootstrap -->
                 @if($appointments->hasPages())
                     <nav aria-label="Page navigation" class="mt-4">
                         <ul class="pagination justify-content-center">
-                            {{-- Previous Page Link --}}
+                            
                             @if($appointments->onFirstPage())
                                 <li class="page-item disabled">
                                     <span class="page-link">
@@ -365,7 +358,7 @@
                                 </li>
                             @endif
 
-                            {{-- Pagination Elements --}}
+                           
                             @foreach($appointments->getUrlRange(1, $appointments->lastPage()) as $page => $url)
                                 @if($page == $appointments->currentPage())
                                     <li class="page-item active" aria-current="page">
@@ -378,7 +371,7 @@
                                 @endif
                             @endforeach
 
-                            {{-- Next Page Link --}}
+                            
                             @if($appointments->hasMorePages())
                                 <li class="page-item">
                                     <a class="page-link" href="{{ $appointments->nextPageUrl() }}" rel="next">
@@ -395,64 +388,37 @@
                         </ul>
                     </nav>
 
-                    <!-- Pagination بديل (أرقام الصفحات) -->
-                    {{-- <div class="page-numbers">
-                        @if(!$appointments->onFirstPage())
-                            <a href="{{ $appointments->previousPageUrl() }}" class="btn-page">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                        @endif
-
-                        @for($i = 1; $i <= $appointments->lastPage(); $i++)
-                            @if($i >= $appointments->currentPage() - 2 && $i <= $appointments->currentPage() + 2)
-                                <a href="{{ $appointments->url($i) }}" 
-                                   class="btn-page {{ $i == $appointments->currentPage() ? 'active' : '' }}">
-                                    {{ $i }}
-                                </a>
-                            @endif
-                        @endfor
-
-                        @if($appointments->hasMorePages())
-                            <a href="{{ $appointments->nextPageUrl() }}" class="btn-page">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                        @endif
-                    </div> --}}
+                    
                 @endif
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // دالة تغيير عدد العناصر في الصفحة
         function changePerPage(value) {
             let url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
-            url.searchParams.set('page', 1); // الرجوع للصفحة الأولى
+            url.searchParams.set('page', 1); 
             window.location.href = url.toString();
         }
         
-        // إضافة تأثير hover للصفوف
         document.querySelectorAll('tbody tr').forEach(row => {
             row.addEventListener('click', function(e) {
                 if (!e.target.closest('select')) {
-                    // يمكن إضافة تفاصيل الموعد هنا
+                    
                     console.log('Clicked row:', this);
                 }
             });
         });
         
-        // تحديث حالة select عند تغيير الحالة
         document.querySelectorAll('select[name="status"]').forEach(select => {
             select.addEventListener('change', function() {
                 this.style.opacity = '0.5';
             });
         });
         
-        // إخفاء رسائل النجاح بعد 5 ثواني
         setTimeout(function() {
             const alert = document.querySelector('.alert');
             if (alert) {

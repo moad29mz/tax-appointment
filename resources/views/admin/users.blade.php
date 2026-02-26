@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'إدارة المستخدمين - المديرية العامة للضرائب')
+@section('title', 'إدارة المستخدمين - جماعة وزان')
 
 @push('styles')
     <style>
@@ -115,7 +115,6 @@
         </div>
     @endif
 
-    <!-- إحصائيات سريعة -->
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="stats-card" style="background: linear-gradient(135deg, #36d1dc, #5b86e5);">
@@ -143,7 +142,6 @@
         </div>
     </div>
 
-    <!-- جدول المستخدمين -->
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
@@ -253,8 +251,6 @@
                                     </div>
                                 </td>
                             </tr>
-
-                            <!-- نموذج عرض المستخدم -->
                             <div class="modal fade" id="viewUserModal{{ $user->id }}" tabindex="-1">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -355,7 +351,6 @@
                                 </div>
                             </div>
 
-                            <!-- نموذج تعديل المستخدم -->
                             <div class="modal fade" id="editUserModal{{ $user->id }}" tabindex="-1">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -483,7 +478,7 @@
 
 @push('scripts')
     <script>
-        // بحث في جدول المستخدمين
+       
         document.getElementById('searchUsers').addEventListener('keyup', function() {
             const searchValue = this.value.toLowerCase();
             const rows = document.querySelectorAll('#usersTable tbody tr');
@@ -494,7 +489,6 @@
             });
         });
 
-        // التحقق من كلمة المرور
         document.querySelectorAll('input[type="password"]').forEach(input => {
             input.addEventListener('blur', function() {
                 const password = this.value;
@@ -508,31 +502,27 @@
             });
         });
 
-        // تفعيل/تعطيل حقول الصلاحيات حسب الدور
         document.querySelectorAll('select[name="role"]').forEach(select => {
             select.addEventListener('change', function() {
                 const modal = this.closest('.modal');
                 const permissionsDiv = modal.querySelector('.permissions-list');
                 
                 if (this.value === 'admin') {
-                    // المدير لديه جميع الصلاحيات
+                    
                     permissionsDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                         checkbox.checked = true;
                         checkbox.disabled = true;
                     });
                 } else {
-                    // تفعيل حقول الصلاحيات للآخرين
                     permissionsDiv.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                         checkbox.disabled = false;
                     });
                 }
             });
             
-            // تشغيل الحدث عند التحميل
             select.dispatchEvent(new Event('change'));
         });
 
-        // تحميل البيانات عند فتح النموذج
         document.addEventListener('DOMContentLoaded', function() {
             const modals = document.querySelectorAll('.modal');
             modals.forEach(modal => {
@@ -547,7 +537,6 @@
     </script>
 @endpush
 
-<!-- نموذج إضافة مستخدم جديد -->
 <div class="modal fade" id="addUserModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

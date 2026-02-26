@@ -200,9 +200,8 @@
 
 @push('scripts')
     <script>
-        // إعداد البيانات للرسوم البيانية
+
         @php
-            // تحضير البيانات للرسم البياني الشهري
             $monthLabels = [];
             $monthTotals = [];
             $monthProcessed = [];
@@ -221,11 +220,9 @@
                 }
             }
             
-            // بيانات توزيع الخدمات
             $paymentCount = $serviceStats ? ($serviceStats->firstWhere('appointment_type', 'payment')->total ?? 0) : 0;
             $consultationCount = $serviceStats ? ($serviceStats->firstWhere('appointment_type', 'consultation')->total ?? 0) : 0;
             
-            // بيانات الأسبوع
             $weekLabels = [];
             $weekAppointments = [];
             $weekProcessed = [];
@@ -239,7 +236,6 @@
             }
         @endphp
         
-        // مخطط الإحصائيات الشهرية
         const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
         const monthlyChart = new Chart(monthlyCtx, {
             type: 'line',
@@ -280,12 +276,11 @@
             }
         });
 
-        // مخطط توزيع الخدمات
         const serviceCtx = document.getElementById('serviceChart').getContext('2d');
         const serviceChart = new Chart(serviceCtx, {
             type: 'doughnut',
             data: {
-                labels: ['أداء الضريبة', 'استفسار وتوجيه'],
+                labels: ['أداء الرسوم', 'استفسار وتوجيه'],
                 datasets: [{
                     data: [{{ $paymentCount }}, {{ $consultationCount }}],
                     backgroundColor: ['#4a6491', '#2c3e50'],
@@ -317,7 +312,6 @@
             }
         });
 
-        // مخطط نشاط الأسبوع
         const weeklyCtx = document.getElementById('weeklyChart').getContext('2d');
         const weeklyChart = new Chart(weeklyCtx, {
             type: 'bar',

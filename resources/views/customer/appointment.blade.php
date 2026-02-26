@@ -88,8 +88,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>مصلحات الجبايات وزان  </h1>
-            <h3>إدارة حجز موعد</h3>
+            <h1>مصلحة الموارد المالية </h1>
+            <h3> حجز موعد</h3>
         </div>
 
         <div class="row">
@@ -159,13 +159,13 @@
                         </div>
 
                         <div class="working-hours">
-                            <i class="fas fa-clock"></i> أوقات العمل: 09:00 - 16:30
+                            <i class="fas fa-clock"></i> أوقات العمل: 08:30 - 16:30
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label">اختر الساعة المتاحة *</label>
                             <div id="timeSlots" class="d-flex flex-wrap">
-                                <!-- سيتم ملء الأوقات المتاحة بواسطة JavaScript -->
+                                
                             </div>
                             <input type="hidden" id="selected_time" name="appointment_time" required>
                         </div>
@@ -182,17 +182,17 @@
             <div class="col-lg-4">
                 <div class="required-docs mb-4">
                     <h4 class="section-title">ماذا يجب أن أحضر؟</h4>
-                    <p>مرحباً بكم في مصلحة الجبايات. لضمان سير موعدكم الخاص بخدمة "أداء الضريبة" في أفضل الظروف، يرجى إحضار الوثائق الأساسية التالية:</p>
+                    <p>مرحباً بكم في مصلحة الموارد المالية. لضمان سير موعدكم الخاص بخدمة "أداء الرسوم" في أفضل الظروف، يرجى إحضار الوثائق الأساسية التالية:</p>
                     
                     <ul class="list-unstyled">
                         <li><strong>البطاقة الوطنية (CIN):</strong></li>
                         <li>✓ الأصلي ونسبة منها</li>
-                        <li>✓ الإعلام بالضريبة (Avis d'imposition)</li>
+                        <li>✓ اشعار بالضريبة (Avis d'imposition)</li>
                         <li>✓ شهادة الملكية أو عقد الكراء</li>
                         <li>✓ آخر وصل أداء (إن وجد)</li>
                     </ul>
                     
-                    <p class="text-muted mt-3"><small>ملاحظة: قد تختلف بعض الوثائق حسب نوع الضريبة (سيارات، عقارات، ...)</small></p>
+                    <p class="text-muted mt-3"><small>ملاحظة: قد تختلف بعض الوثائق حسب نوع الضريبة (محل مشروبات، عقارات، ...)</small></p>
                 </div>
 
                 
@@ -200,24 +200,21 @@
         </div>
     </div>
 
-    <!-- Font Awesome للرموز -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <!-- Bootstrap JS -->
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery -->
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            // تحميل الأوقات المتاحة عند تحميل الصفحة
+         
             loadAvailableTimes('{{ date("Y-m-d") }}');
             
-            // تحميل الأوقات المتاحة عند تغيير التاريخ
             $('#appointment_date').change(function() {
                 loadAvailableTimes($(this).val());
             });
             
-            // معالجة إرسال النموذج
             $('#appointmentForm').submit(function(e) {
                 if (!$('#selected_time').val()) {
                     e.preventDefault();
@@ -225,34 +222,40 @@
                 }
             });
         });
-        
         function loadAvailableTimes(date) {
-            $('#timeSlots').html('<div class="text-center"><div class="spinner-border" role="status"></div><p class="mt-2">جاري تحميل الأوقات المتاحة...</p></div>');
-            $('#selected_time').val('');
-            
-            $.get('/api/available-times', { date: date }, function(response) {
-                $('#timeSlots').empty();
-                
-                if (response.times.length === 0) {
-                    $('#timeSlots').html('<div class="alert alert-warning w-100 text-center">لا توجد أوقات متاحة لهذا التاريخ</div>');
-                    return;
-                }
-                
-                response.times.forEach(function(time) {
-                    const timeSlot = $('<div>').addClass('time-slot col-5 col-md-3').text(time);
-                    
-                    timeSlot.click(function() {
-                        $('.time-slot').removeClass('selected');
-                        $(this).addClass('selected');
-                        $('#selected_time').val(time);
-                    });
-                    
-                    $('#timeSlots').append(timeSlot);
-                });
-            }).fail(function() {
-                $('#timeSlots').html('<div class="alert alert-danger w-100 text-center">خطأ في تحميل الأوقات</div>');
-            });
+    $('#timeSlots').html('<div class="text-center w-100"><div class="spinner-border" role="status"></div><p class="mt-2">جاري تحميل الأوقات المتاحة...</p></div>');
+    $('#selected_time').val('');
+    
+    $.get('/api/available-times', { date: date }, function(response) {
+        $('#timeSlots').empty();
+        
+        if (response.times.length === 0) {
+            $('#timeSlots').html('<div class="alert alert-warning w-100 text-center">لا توجد أوقات متاحة لهذا التاريخ</div>');
+            return;
         }
+        
+        response.times.forEach(function(time) {
+            const timeSlot = $('<div>').addClass('time-slot col-5 col-md-3').text(time);
+            
+            timeSlot.click(function() {
+                $('.time-slot').removeClass('selected');
+                $(this).addClass('selected');
+                $('#selected_time').val(time);
+            });
+            
+            $('#timeSlots').append(timeSlot);
+        });
+        
+        // رسالة توضيحية إذا كان اليوم هو اليوم الحالي
+        const today = new Date().toISOString().split('T')[0];
+        if (date === today) {
+            $('#timeSlots').before('<div><i class="fas fa-clock"></i> </div>');
+        }
+        
+    }).fail(function() {
+        $('#timeSlots').html('<div class="alert alert-danger w-100 text-center">خطأ في تحميل الأوقات</div>');
+    });
+}
     </script>
 </body>
 </html>

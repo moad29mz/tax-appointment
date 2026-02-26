@@ -81,7 +81,7 @@
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
-        <!-- قسم الإعدادات العامة -->
+        
         <div class="settings-section">
             <h4 class="section-title"><i class="fas fa-building"></i> الإعدادات العامة</h4>
             
@@ -90,7 +90,7 @@
                     <label for="organization_name" class="form-label">اسم المؤسسة / الجماعة *</label>
                     <input type="text" class="form-control" id="organization_name" 
                            name="organization_name" 
-                           value="{{ $settings['general']['organization_name']['value'] ?? 'المديرية العامة للضرائب' }}"
+                           value="{{ $settings['general']['organization_name']['value'] ?? 'جماعة وزان' }}"
                            required>
                     <div class="form-text">اسم المؤسسة أو الجماعة المحلية</div>
                 </div>
@@ -99,14 +99,14 @@
                     <label for="municipality_name" class="form-label">اسم البلدية *</label>
                     <input type="text" class="form-control" id="municipality_name" 
                            name="municipality_name" 
-                           value="{{ $settings['general']['municipality_name']['value'] ?? 'بلدية الرباط' }}"
+                           value="{{ $settings['general']['municipality_name']['value'] ?? 'بلدية وزان' }}"
                            required>
                     <div class="form-text">اسم البلدية أو العمالة</div>
                 </div>
             </div>
         </div>
 
-        <!-- قسم الشعار والمظهر -->
+       
         <div class="settings-section">
             <h4 class="section-title"><i class="fas fa-image"></i> الشعار والمظهر</h4>
             
@@ -115,7 +115,7 @@
                     <div class="mb-3">
                         <label for="logo" class="form-label">شعار المؤسسة</label>
                         
-                        <!-- عرض الشعار الحالي إذا كان موجوداً -->
+                       
                         @if(isset($settings['appearance']['logo']['value']) && $settings['appearance']['logo']['value'])
                             <div class="current-logo">
                                 <p class="text-muted">الشعار الحالي:</p>
@@ -161,7 +161,7 @@
             </div>
         </div>
 
-        <!-- قسم معلومات الاتصال -->
+        
         <div class="settings-section">
             <h4 class="section-title"><i class="fas fa-address-book"></i> معلومات الاتصال</h4>
             
@@ -196,13 +196,13 @@
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                     <textarea class="form-control" id="address" name="address" 
-                              rows="3" required>{{ $settings['contact']['address']['value'] ?? 'شارع محمد الخامس، الرباط، المغرب' }}</textarea>
+                              rows="3" required>{{ $settings['contact']['address']['value'] ?? 'شارع مولاي الحسن ' }}</textarea>
                 </div>
                 <div class="form-text">العنوان الكامل للمؤسسة</div>
             </div>
         </div>
 
-        <!-- قسم إعدادات الوقت -->
+        
         <div class="settings-section">
             <h4 class="section-title"><i class="fas fa-clock"></i> إعدادات الوقت والمواعيد</h4>
             
@@ -211,7 +211,7 @@
                     <label for="working_hours_start" class="form-label">ساعة بداية العمل *</label>
                     <input type="time" class="form-control" id="working_hours_start" 
                            name="working_hours_start" 
-                           value="{{ $settings['system']['working_hours_start']['value'] ?? '09:00' }}"
+                           value="{{ $settings['system']['working_hours_start']['value'] ?? '08:30' }}"
                            required>
                 </div>
                 
@@ -226,7 +226,7 @@
             
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="appointment_duration_payment" class="form-label">مدة موعد أداء الضريبة (بالدقائق)</label>
+                    <label for="appointment_duration_payment" class="form-label">مدة موعد أداء الرسوم (بالدقائق)</label>
                     <input type="number" class="form-control" id="appointment_duration_payment" 
                            name="appointment_duration_payment" value="15" min="5" max="60">
                 </div>
@@ -259,7 +259,6 @@
                     
                     
 
-        <!-- أزرار الحفظ -->
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-primary btn-lg px-5">
                 <i class="fas fa-save"></i> حفظ جميع الإعدادات
@@ -271,7 +270,7 @@
 
 @push('scripts')
     <script>
-        // معاينة الشعار قبل الرفع
+        
         function previewLogo(event) {
             const input = event.target;
             const preview = document.getElementById('logoPreview');
@@ -287,7 +286,6 @@
             }
         }
 
-        // التحقق من صحة البريد الإلكتروني
         document.getElementById('official_email').addEventListener('blur', function() {
             const email = this.value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -298,7 +296,7 @@
             }
         });
 
-        // التحقق من صحة رقم الهاتف
+        
         document.getElementById('phone_number').addEventListener('blur', function() {
             const phone = this.value;
             const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
@@ -309,7 +307,6 @@
             }
         });
 
-        // التحقق من أن وقت النهاية بعد وقت البداية
         document.getElementById('working_hours_end').addEventListener('change', function() {
             const startTime = document.getElementById('working_hours_start').value;
             const endTime = this.value;
@@ -321,7 +318,6 @@
             }
         });
 
-        // التأكد من حفظ التغييرات عند الخروج
         let formChanged = false;
         const form = document.querySelector('form');
         const inputs = form.querySelectorAll('input, select, textarea');
